@@ -4,7 +4,7 @@
 * For IED group project
 */
 
-int FSOPin = 13;
+int FSOPin = 12;
 
 void setup(){
   Serial.begin(9600);
@@ -12,6 +12,7 @@ void setup(){
 }
 
 void loop(){
+  //loop
   int device,setting,value;
   if(Serial.available() >= 3){
     // we have a full packet from the desktop
@@ -41,12 +42,14 @@ void writeFSO(int value){
     int transmitBit = (value >> shift) & 0x01;
     digitalWrite(FSOPin, LOW);
     if(transmitBit == 1){
-      delayMicroseconds(32);
+      delayMicroseconds(32); // low time
+      digitalWrite(FSOPin, HIGH);
+      delayMicroseconds(16); // high time
     }
     else{
-      delayMicroseconds(16);
+      delayMicroseconds(16); // low time
+      digitalWrite(FSOPin, HIGH);
+      delayMicroseconds(32); // high time
     }
-    digitalWrite(FSOPin, HIGH);
-    delayMicroseconds(16);
   }
 }
