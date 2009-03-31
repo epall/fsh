@@ -1,10 +1,11 @@
 /*
-* Slave firmware
+* Slave firmware for Free Space Hydroponics
 * 
-* For IED group project
+* Receives commands from master device over FSO link
+* and adjusts internal settings such as servo values.
 */
 
-int FSOPin = 13;
+int FSOPin = 12;
 
 void setup(){
   Serial.begin(9600);
@@ -28,21 +29,23 @@ void receiveFSO(){
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(done == 0){
-    long start = micros();
-    while(digitalRead(FSOPin) == LOW)
-      ;
-    duration = micros()-start;
-    if(duration > 24 && duration < 48)
+    delayMicrosecionds(24); // between 16 and 32 microseconds
+    if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
-    else if(duration < 24)
+    }
+    else{
       readBit = 0; // read a 0
-    else
-      break; // error
-    
+    }
+
     // interpret bit
     data[byteIndex] |= readBit << bitIndex;
-    if(bitIndex >= 8)
+    bitIndex = bitIndex + 1;
+
+    if(bitIndex > 7){
       byteIndex++;
+      bitIndex = 0;
+    }
+    
     if(byteIndex >= 3)
       break; // error
     

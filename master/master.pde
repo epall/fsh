@@ -1,7 +1,8 @@
 /*
-* Master firmware
-* 
-* For IED group project
+* Master firmware for Free Space Hydroponics
+*
+* Receives information to transmit from serial port
+* and transmits it over FSO link connected to FSOPin
 */
 
 int FSOPin = 12;
@@ -37,9 +38,13 @@ void endFSO(){
   digitalWrite(FSOPin, LOW);
 }
 
+/* Write 1 byte to the FSO link.
+*  32+16 = 48 microseconds per pulse, for a
+*  bit rate of approximately 20.8Kbps.
+*/
 void writeFSO(int value){
   for(int shift = 0; shift < 8; shift++){
-    int transmitBit = (value >> shift) & 0x01;
+    int transmitBit = (value >> shift) & 0x01; // select each bit sequentially
     digitalWrite(FSOPin, LOW);
     if(transmitBit == 1){
       delayMicroseconds(32); // low time
