@@ -16,6 +16,8 @@ int CircMotor = 4;
 int BluePWM = 0;
 int RedPWM = 0;
 
+int data[] = {0,0,0};
+
 
 Servo Feeder;
 int FeederPos = 0;
@@ -43,7 +45,7 @@ void DisplayLEDs(){
     RedPWM = data[3];
     analogWrite(RedLED, RedPWM);
   }
-  else if (data[2] == 0x04 && data[3} != BluePWM){
+  else if (data[2] == 0x04 && data[3] != BluePWM){
     BluePWM = data[3];
     analogWrite(BlueLED, BluePWM);
   }  
@@ -67,7 +69,6 @@ void SetCirculator(){
     
 void receiveFSO(){
   int duration = 0;
-  int data = {0,0,0};
   int byteIndex = 0;
   int bitIndex = 0;
   int readBit = 0;
@@ -76,7 +77,7 @@ void receiveFSO(){
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(done == 0){
-    delayMicrosecionds(24); // between 16 and 32 microseconds
+    delayMicroseconds(24); // between 16 and 32 microseconds
     if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
     }
@@ -96,7 +97,7 @@ void receiveFSO(){
     if(byteIndex >= 3)
       break; // error
     
-    start = micros();
+    long start = micros();
     while(digitalRead(FSOPin) == HIGH){
       if(micros() - start > 800){
         done = 1;
