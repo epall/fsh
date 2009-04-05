@@ -28,7 +28,7 @@ void SetCirculator(BYTE device, BYTE setting);
 void setup(void){
   ADCON1 = 0xFF; // no analog inputs
   pinMode(0, OUTPUT);
-  digitalWrite(0, HIGH);
+  digitalWrite(0, HIGH); // I'm alive
   pinMode(FSOPin, INPUT);
   pinMode(RedLED, OUTPUT);
   pinMode(BlueLED, OUTPUT);
@@ -36,7 +36,6 @@ void setup(void){
 }
 
 void loop(void){
-  
   if(digitalRead(FSOPin) == HIGH){
     receiveFSO();
   }
@@ -73,7 +72,7 @@ void receiveFSO(){
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(1){
-    delayMicroseconds(24); // between 16 and 32 microseconds
+    delay(5); // between 3 and 7 milliseconds low time
     if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
     }
@@ -95,9 +94,9 @@ void receiveFSO(){
     
     while(digitalRead(FSOPin) == HIGH){
       count++;
-      delayMicroseconds(24);
+      delay(1);
     }
-    if(count > 10)
+    if(count > 20)
       break;
   }
 
@@ -106,7 +105,7 @@ void receiveFSO(){
 }
 
 void main(){
-  OSCCON = 0x63; // spin up to 4MHz
+  OSCCON = 0x73; // spin up to 8MHz
   setup();
   while(1)
     loop();

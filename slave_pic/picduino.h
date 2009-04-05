@@ -30,37 +30,12 @@ void analogWrite(BYTE pin, BYTE value){
 	// TODO
 }
 
-// locked to 24 microseconds
-void delayMicroseconds(char d) {
-	_asm
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	_endasm;
-}
-
 // Delay for specified number of milliseconds
 void delay(long ms)
 {
     long i;
 
     while (ms--)
-        for (i=0; i < 330; i++)
+        for (i=0; i < 68; i++)
             ;
 }
