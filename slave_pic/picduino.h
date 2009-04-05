@@ -8,22 +8,22 @@ typedef unsigned char BYTE;
 
 void pinMode(BYTE pin, BYTE direction){
 	if(direction == OUTPUT)
-		TRISB &= ~(0x01 << pin);
+		TRISA &= ~(0x01 << pin);
 	else
-		TRISB |= (0x01 << pin);
+		TRISA |= (0x01 << pin);
 }
 
 char digitalRead(BYTE pin){
-	if(PORTB & (0x01 << pin))
+	if(PORTA & (0x01 << pin))
 		return HIGH;
 	return LOW;
 }
 
 void digitalWrite(BYTE pin, BYTE value){
 	if(value == HIGH)
-		LATB |= 0x01 << pin;
+		LATA |= 0x01 << pin;
 	else
-		LATB &= ~(0x01 << pin);
+		LATA &= ~(0x01 << pin);
 }
 
 void analogWrite(BYTE pin, BYTE value){
