@@ -10,6 +10,7 @@
 
 #pragma config WDT = OFF
 #pragma config OSC = INTIO1
+#pragma config DEBUG = ON, LVP = OFF
 
 //Pin Assignments
 int FSOPin = 1; // Chip pin 2
@@ -20,6 +21,7 @@ int CircMotor = 4; // Chip pin 3
 //Variables
 int BluePWM = 0;
 int RedPWM = 0;
+BYTE receive_data[] = {0,0,0};
 
 void receiveFSO(void);
 void DisplayLEDs(BYTE device, BYTE setting);
@@ -66,8 +68,8 @@ void receiveFSO(){
   int byteIndex = 0;
   int bitIndex = 0;
   int readBit = 0;
-  BYTE receive_data[] = {0,0,0};
   long count = 0;
+  unsigned char i;
   
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
@@ -98,6 +100,16 @@ void receiveFSO(){
     }
     if(count > 20)
       break;
+  }
+
+  if(receive_data[0] != 0){
+    digitalWrite(0, LOW);
+    delay(500);
+	for(i = 0; i < 8; i++){
+	  digitalWrite(0, (receive_data[0] << i) & 0x01);
+      delay(250);
+	}
+	while(1);
   }
 
   DisplayLEDs(receive_data[1], receive_data[2]);
