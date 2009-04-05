@@ -1,4 +1,4 @@
-main.hex: main.o
+test.hex: test.o
 	gplink \
 		-c \
 		-s /usr/local/share/gputils/lkr/18f1320.lkr \
@@ -9,13 +9,28 @@ main.hex: main.o
 		libdev18f1320.lib \
 		libio18f1320.lib
 
-main.o: main.asm
+slave.hex: main.o
+	gplink \
+		-c \
+		-s /usr/local/share/gputils/lkr/18f1320.lkr \
+		-o $@ \
+		-m \
+		$^ \
+		-I /Developer/sdcc/share/sdcc/lib/pic16 \
+		libdev18f1320.lib \
+		libio18f1320.lib
+
+%.o: %.asm
 	gpasm -c $<
 
-main.asm: main.c
+test.asm: test.c picduino.h
+	sdcc -S -mpic16 -p18f1320 $<
+
+main.asm: main.c picduino.h
 	sdcc -S -mpic16 -p18f1320 $<
 
 clean:
-	rm main.asm
-	rm main.o
-	rm main.hex
+	rm *.o
+	rm *.asm
+	rm *.hex
+
