@@ -1,4 +1,4 @@
-#include <pic16/pic18fregs.h>
+#include <p18f1320.h>
 #include "picduino.h"
 
 /*
@@ -8,11 +8,14 @@
 * and adjusts internal settings such as servo values.
 */
 
+#pragma config WDT = OFF
+#pragma config OSC = INTIO1
+
 //Pin Assignments
-int FSOPin = 12;
-int RedLED = 2;
-int BlueLED = 3;
-int CircMotor = 4;
+int FSOPin = 1; // Chip pin 2
+int RedLED = 2; // Chip pin 6
+int BlueLED = 3; // Chip pin 7
+int CircMotor = 4; // Chip pin 3
 
 //Variables
 int BluePWM = 0;
@@ -22,14 +25,18 @@ void receiveFSO(void);
 void DisplayLEDs(BYTE device, BYTE setting);
 void SetCirculator(BYTE device, BYTE setting);
 
-void setup(){
+void setup(void){
+  ADCON1 = 0xFF; // no analog inputs
+  pinMode(0, OUTPUT);
+  digitalWrite(0, HIGH);
   pinMode(FSOPin, INPUT);
   pinMode(RedLED, OUTPUT);
   pinMode(BlueLED, OUTPUT);
   pinMode(CircMotor, OUTPUT);
 }
 
-void loop(){
+void loop(void){
+  
   if(digitalRead(FSOPin) == HIGH){
     receiveFSO();
   }
@@ -99,6 +106,7 @@ void receiveFSO(){
 }
 
 void main(){
+  OSCCON = 0x63; // spin up to 4MHz
   setup();
   while(1)
     loop();
