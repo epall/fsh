@@ -103,14 +103,11 @@ void receiveFSO(){
   byte readBit = 0;
   long count = 0;
   long i;
-  
-  digitalWrite(2, HIGH);
+
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(1){
-    digitalWrite(2, LOW);
     delay(5); // between 2 and 8 milliseconds low time
-    digitalWrite(2, HIGH);
 
     if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
@@ -127,11 +124,7 @@ void receiveFSO(){
       byteIndex++;
       bitIndex = 0;
     }
-/*
-    if(byteIndex >= 3){
-      error(2);
-    }
-*/
+
     while(digitalRead(FSOPin) == LOW)
       ;
     while(digitalRead(FSOPin) == HIGH){
@@ -141,16 +134,12 @@ void receiveFSO(){
       break;
   }
 
-  if(receive_data[0] == 0) // all zeros?
-    error(5);
-
   digitalWrite(0, LOW);
-  morse_byte(receive_data[0]);
-  while(1);
+  morse_byte(receive_data[1]);
+  digitalWrite(0, HIGH);
 
   DisplayLEDs(receive_data[1], receive_data[2]);
   SetCirculator(receive_data[1], receive_data[2]);
-//  digitalWrite(0, HIGH);
 }
 
 void main(){
