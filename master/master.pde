@@ -39,22 +39,22 @@ void endFSO(){
 }
 
 /* Write 1 byte to the FSO link.
-*  32+16 = 48 microseconds per pulse, for a
-*  bit rate of approximately 20.8Kbps.
+*  3+7 = 10 milliseconds per bit, giving
+*  a bitrate of 100 bits per second
 */
 void writeFSO(int value){
   for(int shift = 0; shift < 8; shift++){
     int transmitBit = (value >> shift) & 0x01; // select each bit sequentially
     digitalWrite(FSOPin, LOW);
     if(transmitBit == 1){
-      delayMicroseconds(32); // low time
+      delay(3); // low time
       digitalWrite(FSOPin, HIGH);
-      delayMicroseconds(16); // high time
+      delay(7); // high time
     }
     else{
-      delayMicroseconds(16); // low time
+      delay(7); // low time
       digitalWrite(FSOPin, HIGH);
-      delayMicroseconds(32); // high time
+      delay(3); // high time
     }
   }
 }
