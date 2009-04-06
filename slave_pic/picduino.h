@@ -1,4 +1,4 @@
-typedef unsigned char BYTE;
+typedef unsigned char byte;
 
 #define OUTPUT 1
 #define INPUT 0
@@ -6,27 +6,27 @@ typedef unsigned char BYTE;
 #define HIGH 1
 #define LOW 0
 
-void pinMode(BYTE pin, BYTE direction){
+void pinMode(byte pin, byte direction){
 	if(direction == OUTPUT)
 		TRISA &= ~(0x01 << pin);
 	else
 		TRISA |= (0x01 << pin);
 }
 
-char digitalRead(BYTE pin){
+char digitalRead(byte pin){
 	if(PORTA & (0x01 << pin))
 		return HIGH;
 	return LOW;
 }
 
-void digitalWrite(BYTE pin, BYTE value){
+void digitalWrite(byte pin, byte value){
 	if(value == HIGH)
 		LATA |= 0x01 << pin;
 	else
 		LATA &= ~(0x01 << pin);
 }
 
-void analogWrite(BYTE pin, BYTE value){
+void analogWrite(byte pin, byte value){
 	// TODO
 }
 
