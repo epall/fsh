@@ -15,7 +15,7 @@ void setup(){
 void loop(){
   //loop
   int device,setting,value;
-  if(Serial.available() >= 3){
+ if(Serial.available() >= 3){
     // we have a full packet from the desktop
     device = Serial.read();
     setting = Serial.read();
@@ -47,14 +47,14 @@ void writeFSO(int value){
     int transmitBit = (value >> shift) & 0x01; // select each bit sequentially
     digitalWrite(FSOPin, LOW);
     if(transmitBit == 1){
-      delay(3); // low time
+      delay(2); // low time
       digitalWrite(FSOPin, HIGH);
-      delay(7); // high time
+      delay(8); // high time
     }
     else{
-      delay(7); // low time
+      delay(8); // low time
       digitalWrite(FSOPin, HIGH);
-      delay(3); // high time
+      delay(2); // high time
     }
   }
 }
