@@ -27,6 +27,10 @@ void digitalWrite(byte pin, byte value){
 }
 
 void analogWrite(byte pin, byte value){
+    if(value > 128)
+        digitalWrite(pin, HIGH);
+    else
+        digitalWrite(pin, LOW);
 	// TODO
 }
 

@@ -12,6 +12,8 @@
 #pragma config OSC = INTIO1
 #pragma config DEBUG = OFF, LVP = OFF
 
+#define DEVICE_ID 0x01
+
 //Pin Assignments
 int FSOPin = 1; // Chip pin 2
 int RedLED = 2; // Chip pin 6
@@ -77,11 +79,11 @@ void loop(void){
 }
 
 void DisplayLEDs(byte device, byte setting){
-  if (device == 0x03 && setting != RedPWM){
+  if (device == 0x03){
     RedPWM = setting;
     analogWrite(RedLED, RedPWM);
   }
-  else if (device == 0x04 && setting != BluePWM){
+  else if (device == 0x04){
     BluePWM = setting;
     analogWrite(BlueLED, BluePWM);
   }  
@@ -102,12 +104,19 @@ void receiveFSO(){
   byte bitIndex = 0;
   byte readBit = 0;
   long count = 0;
+  byte bitCount = 0;
   long i;
+
+  receive_data[0] = 0;
+  receive_data[1] = 0;
+  receive_data[2] = 0;
 
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(1){
+    digitalWrite(2, HIGH);
     delay(5); // between 2 and 8 milliseconds low time
+    digitalWrite(2, LOW);
 
     if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
@@ -119,12 +128,18 @@ void receiveFSO(){
     // interpret bit
     receive_data[byteIndex] |= readBit << bitIndex;
     bitIndex = bitIndex + 1;
+    bitCount++;
 
     if(bitIndex > 7){
-      byteIndex++;
+      byteIndex = byteIndex+1;
       bitIndex = 0;
     }
-
+/*
+    if(byteIndex > 2)
+      error(6);
+    if(byteIndex < 1)
+      error(2);
+*/
     while(digitalRead(FSOPin) == LOW)
       ;
     while(digitalRead(FSOPin) == HIGH){
@@ -135,11 +150,13 @@ void receiveFSO(){
   }
 
   digitalWrite(0, LOW);
-  morse_byte(receive_data[1]);
+  morse_byte(receive_data[0]);
   digitalWrite(0, HIGH);
 
-  DisplayLEDs(receive_data[1], receive_data[2]);
-  SetCirculator(receive_data[1], receive_data[2]);
+  if(receive_data[0] == DEVICE_ID){
+    DisplayLEDs(receive_data[1], receive_data[2]);
+    SetCirculator(receive_data[1], receive_data[2]);
+  }
 }
 
 void main(){
