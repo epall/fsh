@@ -99,25 +99,21 @@ void SetCirculator(byte device, byte setting){
 }
     
 void receiveFSO(){
-  int duration = 0;
-  byte byteIndex = 0;
+  unsigned int duration = 0;
   byte bitIndex = 0;
+  unsigned long data = 0;
   byte readBit = 0;
-  long count = 0;
-  byte bitCount = 0;
-  long i;
-
-  receive_data[0] = 0;
-  receive_data[1] = 0;
-  receive_data[2] = 0;
+  unsigned int count = 0;
 
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(1){
+    // falling edge of input
     digitalWrite(2, HIGH);
     delay(5); // between 2 and 8 milliseconds low time
     digitalWrite(2, LOW);
 
+    // interpret bit
     if(digitalRead(FSOPin) == HIGH){
       readBit = 1; // read a 1
     }
@@ -125,32 +121,21 @@ void receiveFSO(){
       readBit = 0; // read a 0
     }
 
-    // interpret bit
-    receive_data[byteIndex] |= readBit << bitIndex;
-    bitIndex = bitIndex + 1;
-    bitCount++;
+    // stash bit
+    data |= readBit << bitIndex++;
 
-    if(bitIndex > 7){
-      byteIndex = byteIndex+1;
-      bitIndex = 0;
-    }
-/*
-    if(byteIndex > 2)
-      error(6);
-    if(byteIndex < 1)
-      error(2);
-*/
     while(digitalRead(FSOPin) == LOW)
       ;
+    count = 0;
     while(digitalRead(FSOPin) == HIGH){
       count++;
     }
-    if(count > 3200)
+    if(count > 12000)
       break;
   }
 
   digitalWrite(0, LOW);
-  morse_byte(receive_data[0]);
+  morse_byte((data>>8) & 0x000000FF);
   digitalWrite(0, HIGH);
 
   if(receive_data[0] == DEVICE_ID){
