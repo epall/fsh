@@ -40,15 +40,15 @@ void error(byte freq){
 
 void morse_byte(byte data){
   char i;
-  digitalWrite(7, LOW);
-  delay(500);
+  digitalWrite(0, LOW);
+  delay(2000);
   for(i = 7; i >= 0; i--){
-    digitalWrite(7, HIGH);
+    digitalWrite(0, HIGH);
     if(data & 0x01<<i)
       delay(1000);
     else
       delay(200);
-    digitalWrite(7, LOW);
+    digitalWrite(0, LOW);
     delay(500);
   }
 }
@@ -108,10 +108,7 @@ void receiveFSO(){
   while(digitalRead(FSOPin) == HIGH)
     ; // wait for wake-up phase to complete
   while(1){
-    // falling edge of input
-    digitalWrite(2, HIGH);
     delay(5); // between 2 and 8 milliseconds low time
-    digitalWrite(2, LOW);
 
     // interpret bit
     if(digitalRead(FSOPin) == HIGH){
@@ -133,11 +130,6 @@ void receiveFSO(){
     if(count > 12000)
       break;
   }
-
-//  digitalWrite(0, LOW);
-///  morse_byte(bitIndex);
-//  morse_byte((data>>16) & 0x000000FF);
-//  digitalWrite(0, HIGH);
 
   receive_data[0] = data & 0x000000FF;
   receive_data[1] = (data >> 8) & 0x000000FF;
