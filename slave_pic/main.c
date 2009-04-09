@@ -102,7 +102,7 @@ void receiveFSO(){
   unsigned int duration = 0;
   byte bitIndex = 0;
   unsigned long data = 0;
-  byte readBit = 0;
+  unsigned long readBit = 0;
   unsigned int count = 0;
 
   while(digitalRead(FSOPin) == HIGH)
@@ -134,9 +134,14 @@ void receiveFSO(){
       break;
   }
 
-  digitalWrite(0, LOW);
-  morse_byte((data>>8) & 0x000000FF);
-  digitalWrite(0, HIGH);
+//  digitalWrite(0, LOW);
+///  morse_byte(bitIndex);
+//  morse_byte((data>>16) & 0x000000FF);
+//  digitalWrite(0, HIGH);
+
+  receive_data[0] = data & 0x000000FF;
+  receive_data[1] = (data >> 8) & 0x000000FF;
+  receive_data[2] = (data >> 16) & 0x000000FF;
 
   if(receive_data[0] == DEVICE_ID){
     DisplayLEDs(receive_data[1], receive_data[2]);
