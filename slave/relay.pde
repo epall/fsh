@@ -11,6 +11,7 @@
 #pragma config OSC = INTIO1
 #pragma config DEBUG = OFF, LVP = OFF
 */
+#include <Servo.h>
 
 #define DEVICE_ID 0x01
 
@@ -20,6 +21,9 @@ int RedLED = 2; // Chip pin 6
 int BlueLED = 3; // Chip pin 7
 int CircMotor = 4; // Chip pin 3
 int RelayPin = 11;
+
+Servo Feeder;
+int FeederPos = 0;
 
 //Variables
 int BluePWM = 0;
@@ -97,6 +101,7 @@ void setup(void){
   pinMode(BlueLED, OUTPUT);
   pinMode(CircMotor, OUTPUT);
   Serial.begin(9600);          //  setup serial
+  Feeder.attach(9);
 }
 
 void loop(void){
@@ -130,6 +135,13 @@ void SetCirculator(byte device, byte setting){
   }
   else{
     digitalWrite(CircMotor, HIGH);
+  }
+}
+
+void SetServo(byte device, byte setting){
+  if (device == 0x02 && setting != FeederPos){
+    FeederPos = setting;
+    Feeder.write(FeederPos);
   }
 }
     
@@ -173,6 +185,7 @@ void receiveFSO(){
   if(receive_data[0] == DEVICE_ID){
     DisplayLEDs(receive_data[1], receive_data[2]);
     SetCirculator(receive_data[1], receive_data[2]);
+    SetServo(receive_data[1], receive_data[2]);
   }
   else{
     beginFSO();
@@ -182,3 +195,5 @@ void receiveFSO(){
     endFSO();
   }
 }
+
+
