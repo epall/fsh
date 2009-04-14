@@ -82,7 +82,7 @@ class Send
         sleep(3600)
       end
     }
-    @t1.run
+ #   @t1.run
     @t2= Thread.new {
       Net::TOC.new("FreeSpaceHydro", "tennis") do |msg, buddy|
         buddy.send_im("#{@status}")
@@ -95,15 +95,15 @@ class Send
             msg[b] = ''
             c = msg[/\d+/]
             msg[c] = ''
-            send_packet(a, $red, c * 2.55) if b.match(/red/i)
-            send_packet(a, $blue, c * 2.55) if b.match(/blue/i)
+            send_packet(a, $red, c) if b.match(/red/i)
+            send_packet(a, $blue, c) if b.match(/blue/i)
           end
         rescue
   
         end
       end    
     }
-    @t2.run
+ #   @t2.run
   end
 
   def toggle_weather() 
@@ -112,8 +112,8 @@ class Send
 
   def toggle() 
     if @last_action == 0
-      send_packet(1, $red, 255)
-      send_packet(1, $blue, 255)
+      send_packet('1', $red, '255')
+      send_packet('1', $blue, '255')
     else
       send_packet(1, $red, 0)
       send_packet(1, $blue, 0)
@@ -170,7 +170,7 @@ class Send
 
   def serial_send (input)
     SerialPort.open(@port_str, @baud_rate, @data_bits, @stop_bits, @parity) {|sp|
-    sp.putc input.to_i(10)
+    sp.putc input.to_i(16)
     puts "sending: #{input}"
     @last_action = input
     }
